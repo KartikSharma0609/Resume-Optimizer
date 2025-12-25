@@ -1,7 +1,6 @@
 AI Career Architect
 
-**Live Demo:** resume-optimizer-euftnywe4korzfy5ykghck
-.streamlit.app
+**Live Demo:** resume-optimizer-euftnywe4korzfy5ykghck.streamlit.app
 
 Overview
 The **AI Career Architect** is a Resume Optimization tool powered by **Google Gemini 2.5**. It helps job seekers automated the tedious process of tailoring resumes for specific job applications. 
