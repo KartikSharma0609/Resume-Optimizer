@@ -4,14 +4,11 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate
 import os
 
-# --- Page Config ---
 st.set_page_config(page_title="AI Career Architect", page_icon="🚀", layout="wide")
 
 st.title("🚀 AI Career Architect")
 st.markdown("### Optimize your resume & generate cover letters using Gemini 2.5")
 
-# --- Sidebar ---
-# --- Sidebar ---
 with st.sidebar:
     st.header("Settings")
     
@@ -101,4 +98,5 @@ if st.button("🚀 Launch Analysis", type="primary"):
                 st.markdown(res_cover.content)
                 
     else:
+
         st.warning("⚠️ Please upload a resume and paste a job description.")
