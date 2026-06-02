@@ -12,16 +12,21 @@ st.markdown("### Optimize your resume & generate cover letters using Gemini 2.5"
 with st.sidebar:
     st.header("Settings")
     
-    # 1. Check if the Key is already in the System Secrets
-    if "GOOGLE_API_KEY" in st.secrets:
-        st.success("✅")
-        api_key = st.secrets["GOOGLE_API_KEY"]
+    # 1. First, try to get the key from the OS environment (used by Docker)
+    api_key = os.getenv("GOOGLE_API_KEY")
+
+    # 2. If it is NOT in the environment, try falling back to Streamlit secrets (used by Streamlit Cloud)
+    if not api_key:
+    	try:
+            api_key = st.secrets["GOOGLE_API_KEY"]
+    	except (FileNotFoundError, KeyError):
+            api_key = None
+    # 3. Final safety check
+    if not api_key:
+    	st.error("API Key not found. Please set it as an environment variable or in Streamlit secrets.")
+    	st.stop() # Stops the app from crashing further down
     else:
-        # 2. If no secret key found, ask the user
-        api_key = st.text_input("Enter Google API Key", type="password")
-        if not api_key:
-            st.warning("⚠️ Enter API Key to proceed.")
-            st.stop()
+        st.success("✅ API Key loaded successfully!")
 
 # --- Initialize AI ---
 try:
@@ -46,13 +51,26 @@ def extract_text_from_pdf(pdf_file):
         return None
 
 # --- Main UI ---
+# PASTE THIS NEW SECTION:
+st.subheader("1. Provide Details")
+
+# Create two side-by-side columns
 col1, col2 = st.columns(2)
 
 with col1:
-    uploaded_file = st.file_uploader("Upload Resume (PDF)", type="pdf")
+    uploaded_file = st.file_uploader("Upload Resume (PDF)", type=["pdf"])
+    
+    # Keep the security check perfectly indented inside col1
+    if uploaded_file is not None:
+        reader = PdfReader(uploaded_file)
+        if len(reader.pages) > 10:
+            st.error("🚨 Security Alert: PDF exceeds 10 pages.")
+            st.stop()
+        st.success(f"✅ Safe! ({len(reader.pages)} pages)")
 
 with col2:
-    job_desc = st.text_area("Paste Job Description", height=300)
+    # Adding the Job Description area to the right side
+    job_desc = st.text_area("Paste Job Description", height=200)
 
 # --- The Logic ---
 if st.button("🚀 Launch Analysis", type="primary"):
